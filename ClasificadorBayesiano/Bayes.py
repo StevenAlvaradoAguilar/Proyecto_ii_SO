@@ -63,8 +63,10 @@ def imprimirL():
 def bayes(cd, cs, universo, url, listaC1, listaC2):
     pVd = cd / universo
     pVs = cs / universo
+
     webScraping.extraer(url)
     lista = webScraping.listaPaginas[0]
+
     lis = list()
     for objeto in lista[1]:
         palabras = []
@@ -83,15 +85,35 @@ def bayes(cd, cs, universo, url, listaC1, listaC2):
         lis.append(words)
     nueva = []
     for i in lis:
-        nueva = i.split()
-    l = []
+        nueva = nueva + i.split()
     frecuenciaPalab = [nueva.count(w) for w in nueva]  # a list comprehension
     lis = list(zip(nueva, frecuenciaPalab))
     nueva1 = []
     for x in range (len(lis)-1):
         if lis[x]  not in  nueva1:
             nueva1.append(lis[x])
-    print(nueva1)
+    cantD = 0
+    cantS = 0
+    for i in nueva1:
+            if i[0] in listaC1:
+                print(i[0] + "-- DEPORTES")
+                cantD += 1
+            if i[0] in listaC2:
+                print(i[0] + "-- SEXUAL")
+                cantS +=1
+
+    print("Palabras de deportes: " + str(cantD))
+    print("Palabras de SEXUAL: " + str(cantS))
+
+    probabilidadD = pVd * cantD/cd
+    probabilidadS = pVs * cantS/cs
+
+    print("Probabilidad de Deportes: "+ str(probabilidadD)+"\n")
+    print("Probabilidad de Porno: " + str(probabilidadS) + "\n")
+
+
+
+
 
 def sacarProbabilidadPrevia(lista, categoria1 , categoria2):
     listaC1 = funcionespostgres.consultarCategoria(categoria1)
@@ -119,7 +141,7 @@ def sacarProbabilidadPrevia(lista, categoria1 , categoria2):
             else:
                 cant2 += 1
     #print(str(universo) + "--"+ str(cant1) + "--"+ str(cant2) +"----------"+ str(otro))
-    bayes(cant1,cant2,universo,"https://nicepage.com/c/sports-landing-page",listaC1,listaC2)
+    bayes(cant1,cant2,universo,"https://www.britannica.com/place/New-York-state/Sports-and-recreation",listaC1,listaC2)
 
 sacarProbabilidadPrevia(l,"deportes","sexual")
 
