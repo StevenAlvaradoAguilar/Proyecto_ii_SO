@@ -30,7 +30,7 @@ def extraer(url):
 def webscraping():
     con = Conexion.conexion()
     cur = con.cursor()
-    query = "Select url from direcciones LIMIT 50 "
+    query = "Select url from direcciones where id >= 2000 and id < 2050"
     cur.execute(query)
     exc = ThreadPoolExecutor(max_workers=3)
     for objeto in cur.fetchall():

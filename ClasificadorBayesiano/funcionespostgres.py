@@ -88,3 +88,16 @@ def web_site(nombreTabla):
     conexion.close()
 
 #web_site("direcciones")
+
+
+def consultarCategoria(nombreCategoria):
+    lista = []
+    conexion = Conexion.conexion()
+    cur = conexion.cursor()
+    cur.execute("select palabraclave from "+ nombreCategoria)
+
+    for objeto in cur.fetchall():
+        lista.append(objeto[0])
+    cur.close()
+    conexion.close()
+    return lista
