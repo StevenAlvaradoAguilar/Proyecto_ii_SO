@@ -21,9 +21,16 @@ def cargar():
         for x in objeto[1]:
             palabras.append(str(x))
         for y in palabras:
-            y = y.replace("\"", "*")
-            y = y.replace("\'", "*")
-            words = words + y
+            y = y.replace("\\", "")
+            y = y.replace("\'", "")
+            y = y.replace("\"", "")
+            y = y.replace(",", "")
+            y = y.replace(".", "")
+            y = y.replace(";", "")
+            y = y.replace("'", "")
+            y = y.replace("<", " ")
+            y = y.replace(">", " ")
+            words = words + y.lower()
         try:
             funcionespostgres.insertarResultados(objeto[0], words)
             #print("Si agrega")
@@ -34,7 +41,6 @@ def cargar():
 #cargar()
 
 resultados = funcionespostgres.llenarResultador()
-
 listaPalabras = list()
 
 for i in resultados:
@@ -59,14 +65,9 @@ def imprimirL():
             print("\n")
         #    print(j[0] + " -----  "+ str(j[1]))
 
+#imprimirL()
 
-def bayes(cd, cs, universo, url, listaC1, listaC2):
-    pVd = cd / universo
-    pVs = cs / universo
-
-    webScraping.extraer(url)
-    lista = webScraping.listaPaginas[0]
-
+def corregirLista(lista):
     lis = list()
     for objeto in lista[1]:
         palabras = []
@@ -83,39 +84,48 @@ def bayes(cd, cs, universo, url, listaC1, listaC2):
             y = y.replace(">", " ")
             words = words + y.lower()
         lis.append(words)
+    return lis
+
+def segmentarlista(lis):
     nueva = []
     for i in lis:
         nueva = nueva + i.split()
     frecuenciaPalab = [nueva.count(w) for w in nueva]  # a list comprehension
     lis = list(zip(nueva, frecuenciaPalab))
     nueva1 = []
-    for x in range (len(lis)-1):
-        if lis[x]  not in  nueva1:
+    for x in range(len(lis) - 1):
+        if lis[x] not in nueva1:
             nueva1.append(lis[x])
+    return nueva1
+
+
+def bayes(cd, cs, universo, url, listaC1, listaC2):
+    #print("_________________________________________________________________________ BAYES ________________________________________________________________\n")
+    pVd = cd / universo
+    pVs = cs / universo
+    webScraping.extraer(url)
+    lista = webScraping.listaPaginas[0]
+    lis = corregirLista(lista)
+    listaWords = segmentarlista(lis)
     cantD = 0
     cantS = 0
-    for i in nueva1:
+    for i in listaWords:
             if i[0] in listaC1:
-                print(i[0] + "-- DEPORTES")
+                #print(i[0] + "-- DEPORTES")
                 cantD += 1
             if i[0] in listaC2:
-                print(i[0] + "-- SEXUAL")
+                #print(i[0] + "-- SEXUAL")
                 cantS +=1
-
     print("Palabras de deportes: " + str(cantD))
     print("Palabras de SEXUAL: " + str(cantS))
-
+    print("______________________________________________________________________________")
     probabilidadD = pVd * cantD/cd
     probabilidadS = pVs * cantS/cs
-
     print("Probabilidad de Deportes: "+ str(probabilidadD)+"\n")
     print("Probabilidad de Porno: " + str(probabilidadS) + "\n")
 
 
-
-
-
-def sacarProbabilidadPrevia(lista, categoria1 , categoria2):
+def sacarProbabilidadPrevia(lista, url ,categoria1 , categoria2):
     listaC1 = funcionespostgres.consultarCategoria(categoria1)
     listaC2 = funcionespostgres.consultarCategoria(categoria2)
     universo = len(lista)
@@ -125,6 +135,7 @@ def sacarProbabilidadPrevia(lista, categoria1 , categoria2):
     for i in lista:
         l1 = []
         l2 = []
+        #print("______________________________________________________________________________")
         #print(i[0])
         for j in i[1]:
             if j[0] in listaC1 and j[1] < 5:
@@ -134,14 +145,16 @@ def sacarProbabilidadPrevia(lista, categoria1 , categoria2):
                 #print(j[0] + "-- SEXUAL")
                 l2.append(j[0])
         if(len(l1)== len(l2)):
+            #print("Sin Clasificar")
             otro += 1
         else:
             if(len(l1) > len(l2)):
+                #print("Clasificado como Deporte")
                 cant1 += 1
             else:
+                #print("Clasificado como Sexual")
                 cant2 += 1
     #print(str(universo) + "--"+ str(cant1) + "--"+ str(cant2) +"----------"+ str(otro))
-    bayes(cant1,cant2,universo,"https://www.britannica.com/place/New-York-state/Sports-and-recreation",listaC1,listaC2)
+    bayes(cant1,cant2,universo,url,listaC1,listaC2)
 
-sacarProbabilidadPrevia(l,"deportes","sexual")
-
+sacarProbabilidadPrevia(l,"https://www.espn.com/","deportes","sexual")

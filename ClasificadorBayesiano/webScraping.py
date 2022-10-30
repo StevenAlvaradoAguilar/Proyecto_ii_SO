@@ -20,12 +20,14 @@ def extraer(url):
     try:
         page = requests.get(url, timeout=2)
         soup = BeautifulSoup(page.content, 'html.parser')
-        palabras = soup.find_all('p')
+        p = soup.find_all('p')
+        h1 = soup.find_all('h1')
+        span = soup.find_all('span')
+        palabras = p + h1 + span
         listaPaginas.append([url,palabras])
     except:
         pass
         #print("No se puede acceder")
-
 
 def webscraping():
     con = Conexion.conexion()
@@ -39,7 +41,6 @@ def webscraping():
         exc.submit(extraer, url)
     cur.close()
     con.close()
-
 
 def extraercategoria(url):
     lista = []
