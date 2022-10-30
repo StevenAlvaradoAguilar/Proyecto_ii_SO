@@ -125,14 +125,14 @@ def bayes(cd, cs, universo, url, listaC1, listaC2):
     print("Probabilidad de Porno: " + str(probabilidadS) + "\n")
 
 
-def sacarProbabilidadPrevia(lista, url ,categoria1 , categoria2):
+def sacarProbabilidadPrevia(url ,categoria1 , categoria2):
     listaC1 = funcionespostgres.consultarCategoria(categoria1)
     listaC2 = funcionespostgres.consultarCategoria(categoria2)
-    universo = len(lista)
+    universo = len(l)
     cant1 = 0
     cant2 = 0
     otro = 0
-    for i in lista:
+    for i in l:
         l1 = []
         l2 = []
         #print("______________________________________________________________________________")
@@ -157,4 +157,4 @@ def sacarProbabilidadPrevia(lista, url ,categoria1 , categoria2):
     #print(str(universo) + "--"+ str(cant1) + "--"+ str(cant2) +"----------"+ str(otro))
     bayes(cant1,cant2,universo,url,listaC1,listaC2)
 
-sacarProbabilidadPrevia(l,"https://www.espn.com/","deportes","sexual")
+sacarProbabilidadPrevia("https://www.espn.com/","deportes","sexual")
