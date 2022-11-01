@@ -51,6 +51,7 @@ def extraercategoria(url):
         for i in palabras:
             lista.append(i.text)
         listaDeportesNew = []
+
         for i in range(0, len(lista), 1):
             palabra = ''
             for j in range(0, len(lista[i]), 1):
@@ -58,7 +59,9 @@ def extraercategoria(url):
                     palabra = palabra + lista[i][j]
             listaDeportesNew.append(palabra)
         lista = listaDeportesNew
-        funcionespostgres.insertarcategoria("sexual",lista)
+
+        print(lista)
+        #funcionespostgres.insertarcategoria("sexual",lista)
     except:
         pass
         #print("No se puede acceder")

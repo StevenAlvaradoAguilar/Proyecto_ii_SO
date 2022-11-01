@@ -47,6 +47,8 @@ for i in resultados:
     palabras = i[1].split()
     listaPalabras.append([i[0],palabras])
 
+
+
 l = []
 for i in listaPalabras:
     frecuenciaPalab = [i[1].count(w) for w in i[1]] # a list comprehension
@@ -57,6 +59,7 @@ for i in listaPalabras:
             word.append(j)
     l.append([i[0],word])
 
+
 def imprimirL():
     for i in l:
         print("__________________________________________________________________________________________________________________________________________\n")
@@ -64,7 +67,6 @@ def imprimirL():
             print(j)
             print("\n")
         #    print(j[0] + " -----  "+ str(j[1]))
-
 #imprimirL()
 
 def corregirLista(lista):
@@ -98,6 +100,11 @@ def segmentarlista(lis):
             nueva1.append(lis[x])
     return nueva1
 
+def verificarLis(listaC1,listaC2,var):
+    if var in listaC1:
+        return 1
+    if var in listaC2:
+        return 2
 
 def bayes(cd, cs, universo, url, listaC1, listaC2):
     #print("_________________________________________________________________________ BAYES ________________________________________________________________\n")
@@ -109,13 +116,66 @@ def bayes(cd, cs, universo, url, listaC1, listaC2):
     listaWords = segmentarlista(lis)
     cantD = 0
     cantS = 0
-    for i in listaWords:
-            if i[0] in listaC1:
-                #print(i[0] + "-- DEPORTES")
+
+    for i in range (0,len(listaWords) - 1,10):
+        try:
+            palabra1 = listaWords[i][0]
+        except:
+            print("Se acabo la lista")
+            break
+        try:
+            palabra2 = listaWords[i+1][0]
+        except:
+            print("Se acabo la lista")
+            break
+        try:
+            palabra3 = listaWords[i+2][0]
+        except:
+            print("Se acabo la lista")
+            break
+        try:
+            palabra4 = listaWords[i+3][0]
+        except:
+            print("Se acabo la lista")
+            break
+        try:
+            palabra5 = listaWords[i+4][0]
+        except:
+            print("Se acabo la lista")
+            break
+        try:
+            palabra6  = listaWords[i+5][0]
+        except:
+            print("Se acabo la lista")
+            break
+        try:
+            palabra7 = listaWords[i+6][0]
+        except:
+            print("Se acabo la lista")
+            break
+        try:
+            palabra8 = listaWords[i+7][0]
+        except:
+            print("Se acabo la lista")
+            break
+        try:
+            palabra9 = listaWords[i+8][0]
+        except:
+            print("Se acabo la lista")
+            break
+        try:
+            palabra10 = listaWords[i+9][0]
+        except:
+            print("Se acabo la lista")
+            break
+        #print("___________________________________________")
+        var = Pool(3).map(partial(verificarLis,listaC1,listaC2),[palabra1,palabra2, palabra3, palabra4,palabra5,palabra6,palabra7,palabra8,palabra9,palabra10])
+        for i in var:
+            #print(i)
+            if i == 1:
                 cantD += 1
-            if i[0] in listaC2:
-                #print(i[0] + "-- SEXUAL")
-                cantS +=1
+            if i == 2:
+                cantS += 1
     print("Palabras de deportes: " + str(cantD))
     print("Palabras de SEXUAL: " + str(cantS))
     print("______________________________________________________________________________")
@@ -128,6 +188,7 @@ def bayes(cd, cs, universo, url, listaC1, listaC2):
 def sacarProbabilidadPrevia(url ,categoria1 , categoria2):
     listaC1 = funcionespostgres.consultarCategoria(categoria1)
     listaC2 = funcionespostgres.consultarCategoria(categoria2)
+
     universo = len(l)
     cant1 = 0
     cant2 = 0
@@ -138,6 +199,7 @@ def sacarProbabilidadPrevia(url ,categoria1 , categoria2):
         #print("______________________________________________________________________________")
         #print(i[0])
         for j in i[1]:
+            #print(j)
             if j[0] in listaC1 and j[1] < 5:
                 #print(j[0] + "-- DEPORTES")
                 l1.append(j[0])
@@ -157,4 +219,10 @@ def sacarProbabilidadPrevia(url ,categoria1 , categoria2):
     #print(str(universo) + "--"+ str(cant1) + "--"+ str(cant2) +"----------"+ str(otro))
     bayes(cant1,cant2,universo,url,listaC1,listaC2)
 
-sacarProbabilidadPrevia("https://www.espn.com/","deportes","sexual")
+
+
+
+if __name__ == '__main__':
+    sacarProbabilidadPrevia("https://www.espn.com/","deportes","sexual")
+
+#https://www.xvideos.com/tags/espanol
